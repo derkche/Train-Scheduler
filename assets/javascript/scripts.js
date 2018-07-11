@@ -1,6 +1,5 @@
 $(document).ready(function() {
 
-// 1. Initialize Firebase
 var config = {
   apiKey: "AIzaSyBOZdoZyVF_Wq1mPYjPEv-8KKkCEsub5hA",
   authDomain: "trainz-7aafe.firebaseapp.com",
@@ -13,7 +12,6 @@ firebase.initializeApp(config);
   
   var database = firebase.database();
   
-  // 2. Button for adding Trains
   $("#add-train-btn").on("click", function(event) {
     event.preventDefault();
   
@@ -35,40 +33,45 @@ firebase.initializeApp(config);
     // Uploads new train data to the database
     database.ref().push(newTrain);
   
-    // Logs everything to console
     console.log(newTrain.train);
     console.log(newTrain.destination);
     console.log(newTrain.start);
     console.log(newTrain.frequency);
   
-    // Alert
     alert("Train successfully added");
-  
-    // Clears all of the text-boxes
+
     $("#train-name-input").val("");
     $("#destination-input").val("");
     $("#first-train-input").val("");
     $("#frequency-input").val("");
+
+    return false;
   });
   
-  // 3. Create Firebase event for adding train to the database and a row in the html when a user adds an entry
   database.ref().on("child_added", function(childSnapshot, prevChildKey) {
-  
-    console.log(childSnapshot.val());
   
     var trainName = childSnapshot.val().train;
     var trainDestination = childSnapshot.val().destination;
     var trainStart = childSnapshot.val().start;
     var trainFrequency = childSnapshot.val().frequency;
-  
-    console.log(trainName);
-    console.log(trainDestination);
-    console.log(trainStart);
-    console.log(trainFrequency);
-  
-    // Add each train's data into the table
+
+    var timeArray = trainStart.split(":");
+    var trainTime = moment().hours(timeArray[0]).minutes(timeArray[1]);
+    var maxMoment = moment.max(moment(), trainTime);
+    var trainMinutes;
+    var trainArrival;
+    if (maxMoment === trainTime) {
+      trainArrival = trainTime.format("hh:mm A");
+      trainMinutes = trainTime.diff(moment(), "minutes");
+    } else {
+      var differenceTimes = moment().diff(trainTime, "minutes");
+      var trainRemainder = differenceTimes % trainFrequency;
+      trainMinutes = trainFrequency - trainRemainder;
+      trainArrival = moment().add(trainMinutes, "m").format("hh:mm A");
+    }
+
     $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" +
-    trainStart + "</td><td>" + trainFrequency + "</td><td>");
+    trainStart + "</td><td>" + trainFrequency + "</td><td>" + trainArrival + "</td><td>" + trainMinutes + "</td></tr>");
   });
   
 });
