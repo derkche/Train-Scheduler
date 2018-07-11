@@ -20,7 +20,7 @@ firebase.initializeApp(config);
     // Grabs user input
     var trainName = $("#train-name-input").val().trim();
     var trainDestination = $("#destination-input").val().trim();
-    var trainStart = moment($("#first-train-input").val().trim(),"hh:mm").format();
+    var trainStart = $("#first-train-input").val().trim();
     var trainFrequency = $("#frequency-input").val().trim();
   
     // Creates local "temporary" object for holding train data
@@ -56,22 +56,19 @@ firebase.initializeApp(config);
   
     console.log(childSnapshot.val());
   
-    var trainName = childSnapshot.val().name;
-    var trainDestination = childSnapshot.val().role;
+    var trainName = childSnapshot.val().train;
+    var trainDestination = childSnapshot.val().destination;
     var trainStart = childSnapshot.val().start;
-    var trainFrequency = childSnapshot.val().rate;
+    var trainFrequency = childSnapshot.val().frequency;
   
     console.log(trainName);
     console.log(trainDestination);
     console.log(trainStart);
     console.log(trainFrequency);
   
-    // Prettify the Train Start time
-    var trainStartPretty = moment.unix(trainStart).format("MM/DD/YY");
-  
     // Add each train's data into the table
     $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" +
-    trainStartPretty + "</td><td>" + trainFrequency + "</td><td>");
+    trainStart + "</td><td>" + trainFrequency + "</td><td>");
   });
   
 });
