@@ -20,7 +20,7 @@ firebase.initializeApp(config);
     // Grabs user input
     var trainName = $("#train-name-input").val().trim();
     var trainDestination = $("#destination-input").val().trim();
-    var trainStart = moment($("#first-train-input").val().trim(), "HH:mm").format("X");
+    var trainStart = moment($("#first-train-input").val().trim(),"hh:mm").format();
     var trainFrequency = $("#frequency-input").val().trim();
   
     // Creates local "temporary" object for holding train data
@@ -30,6 +30,7 @@ firebase.initializeApp(config);
       start: trainStart,
       frequency: trainFrequency
     };
+    console.log(newTrain);
   
     // Uploads new train data to the database
     database.ref().push(newTrain);
